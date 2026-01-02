@@ -42,8 +42,17 @@ function initUI() {
 
     // 메뉴 외부 클릭 시 닫기
     document.addEventListener('click', (e) => {
+      const fontSizeSubmenu = document.getElementById('fontSizeSubmenu');
+
+      // 서브메뉴 외부 클릭 시 서브메뉴 닫기
+      if (fontSizeSubmenu && !fontSizeSubmenu.contains(e.target) && e.target !== document.getElementById('fontSizeBtn')) {
+        closeFontSizeSubmenu();
+      }
+
+      // 메뉴 외부 클릭 시 메뉴 닫기
       if (!menu.contains(e.target) && e.target !== menuBtn) {
         closeMenu();
+        closeFontSizeSubmenu();
       }
     });
   }
@@ -64,15 +73,42 @@ function initUI() {
 
   // 이미지 추가 버튼
   if (editorImageBtn) {
-    editorImageBtn.addEventListener('click', () => {
-      openImagePicker();
+    editorImageBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleImagePickerMenu();
     });
   }
 
-  // 이미지 파일 선택
-  const imageInput = document.getElementById('imageInput');
-  if (imageInput) {
-    imageInput.addEventListener('change', (e) => {
+  // 이미지 선택 메뉴 버튼들
+  const cameraBtnInMenu = document.getElementById('cameraBtn');
+  const galleryBtnInMenu = document.getElementById('galleryBtn');
+
+  if (cameraBtnInMenu) {
+    cameraBtnInMenu.addEventListener('click', () => {
+      openCamera();
+      closeImagePickerMenu();
+    });
+  }
+
+  if (galleryBtnInMenu) {
+    galleryBtnInMenu.addEventListener('click', () => {
+      openGallery();
+      closeImagePickerMenu();
+    });
+  }
+
+  // 카메라 입력
+  const cameraInput = document.getElementById('cameraInput');
+  if (cameraInput) {
+    cameraInput.addEventListener('change', (e) => {
+      handleImageSelect(e);
+    });
+  }
+
+  // 앨범 입력
+  const galleryInput = document.getElementById('galleryInput');
+  if (galleryInput) {
+    galleryInput.addEventListener('change', (e) => {
       handleImageSelect(e);
     });
   }
@@ -84,6 +120,16 @@ function initUI() {
       removeImage();
     });
   }
+
+  // 외부 클릭 시 이미지 선택 메뉴 닫기
+  document.addEventListener('click', (e) => {
+    const imagePickerMenu = document.getElementById('imagePickerMenu');
+    const imageBtn = document.querySelector('.memo-editor__image-btn');
+
+    if (imagePickerMenu && !imagePickerMenu.contains(e.target) && e.target !== imageBtn) {
+      closeImagePickerMenu();
+    }
+  });
 
   // 저장 버튼
   const saveBtn = document.querySelector('.memo-editor__save-btn');
@@ -122,11 +168,22 @@ function initUI() {
   }
 
   if (fontSizeBtn) {
-    fontSizeBtn.addEventListener('click', () => {
-      toggleFontSize();
-      closeMenu();
+    fontSizeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFontSizeSubmenu();
     });
   }
+
+  // 글자크기 서브메뉴 버튼들
+  const fontSizeSubmenuItems = document.querySelectorAll('.menu__submenu-item[data-size]');
+  fontSizeSubmenuItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const size = item.dataset.size;
+      setFontSize(size);
+      closeFontSizeSubmenu();
+      closeMenu();
+    });
+  });
 
   if (darkModeBtn) {
     darkModeBtn.addEventListener('click', () => {
@@ -554,10 +611,32 @@ function shareMemoContent() {
 // 이미지 처리 함수
 // ====================
 
-// 이미지 선택 다이얼로그 열기
-function openImagePicker() {
-  const imageInput = document.getElementById('imageInput');
-  imageInput.click();
+// 이미지 선택 메뉴 토글
+function toggleImagePickerMenu() {
+  const menu = document.getElementById('imagePickerMenu');
+  if (menu.hasAttribute('hidden')) {
+    menu.removeAttribute('hidden');
+  } else {
+    menu.setAttribute('hidden', '');
+  }
+}
+
+// 이미지 선택 메뉴 닫기
+function closeImagePickerMenu() {
+  const menu = document.getElementById('imagePickerMenu');
+  menu.setAttribute('hidden', '');
+}
+
+// 카메라 열기
+function openCamera() {
+  const cameraInput = document.getElementById('cameraInput');
+  cameraInput.click();
+}
+
+// 앨범 열기
+function openGallery() {
+  const galleryInput = document.getElementById('galleryInput');
+  galleryInput.click();
 }
 
 // 이미지 선택 처리
@@ -604,11 +683,15 @@ function removeImage() {
   currentImageData = null;
   const preview = document.getElementById('imagePreview');
   const previewImage = document.getElementById('previewImage');
-  const imageInput = document.getElementById('imageInput');
+  const cameraInput = document.getElementById('cameraInput');
+  const galleryInput = document.getElementById('galleryInput');
 
   previewImage.src = '';
   preview.setAttribute('hidden', '');
-  imageInput.value = ''; // 파일 입력 초기화
+
+  // 두 개의 파일 입력 모두 초기화
+  if (cameraInput) cameraInput.value = '';
+  if (galleryInput) galleryInput.value = '';
 }
 
 
@@ -765,22 +848,49 @@ function searchMemos(query) {
 // ====================
 
 const FONT_SIZES = ['small', 'medium', 'large'];
-let currentFontSizeIndex = 1; // 기본값: medium
+let currentFontSize = 'medium'; // 기본값: medium
 
-function toggleFontSize() {
-  currentFontSizeIndex = (currentFontSizeIndex + 1) % FONT_SIZES.length;
-  const fontSize = FONT_SIZES[currentFontSizeIndex];
+// 글자크기 서브메뉴 토글
+function toggleFontSizeSubmenu() {
+  const submenu = document.getElementById('fontSizeSubmenu');
+  if (submenu.hasAttribute('hidden')) {
+    submenu.removeAttribute('hidden');
+    updateFontSizeSubmenuActive();
+  } else {
+    submenu.setAttribute('hidden', '');
+  }
+}
 
-  applyFontSize(fontSize);
-  localStorage.setItem('h_memo_font_size', fontSize);
+// 글자크기 서브메뉴 닫기
+function closeFontSizeSubmenu() {
+  const submenu = document.getElementById('fontSizeSubmenu');
+  submenu.setAttribute('hidden', '');
+}
 
-  const labels = { small: '작게', medium: '보통', large: '크게' };
-  alert(`글자크기: ${labels[fontSize]}`);
+// 글자크기 설정
+function setFontSize(size) {
+  if (!FONT_SIZES.includes(size)) return;
+
+  currentFontSize = size;
+  applyFontSize(size);
+  localStorage.setItem('h_memo_font_size', size);
 }
 
 function applyFontSize(size) {
   document.body.classList.remove('font-small', 'font-medium', 'font-large');
   document.body.classList.add(`font-${size}`);
+}
+
+// 현재 선택된 글자크기 표시
+function updateFontSizeSubmenuActive() {
+  const submenuItems = document.querySelectorAll('.menu__submenu-item[data-size]');
+  submenuItems.forEach(item => {
+    if (item.dataset.size === currentFontSize) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
 }
 
 
@@ -813,9 +923,10 @@ function loadSettings() {
   // 글자크기 설정 불러오기
   const savedFontSize = localStorage.getItem('h_memo_font_size');
   if (savedFontSize && FONT_SIZES.includes(savedFontSize)) {
-    currentFontSizeIndex = FONT_SIZES.indexOf(savedFontSize);
+    currentFontSize = savedFontSize;
     applyFontSize(savedFontSize);
   } else {
+    currentFontSize = 'medium';
     applyFontSize('medium');
   }
 

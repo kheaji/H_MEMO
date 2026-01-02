@@ -120,6 +120,10 @@ ul {
   padding: var(--spacing-xs);
 }
 
+.menu__item-wrapper {
+  position: relative;
+}
+
 .menu__item {
   display: block;
   width: 100%;
@@ -132,6 +136,43 @@ ul {
 
 .menu__item:hover {
   background-color: var(--color-hover);
+}
+
+/* 서브메뉴 */
+.menu__submenu {
+  position: absolute;
+  left: 0;
+  top: 45px;
+  margin-left: var(--spacing-xs);
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(46, 40, 66, 0.15);
+  min-width: 120px;
+  padding: var(--spacing-xs);
+}
+
+.menu__submenu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.menu__submenu-item:hover {
+  background-color: var(--color-hover);
+}
+
+.menu__submenu-item.active {
+  background-color: var(--color-accent);
+  color: white;
 }
 
 
@@ -187,6 +228,10 @@ ul {
   gap: var(--spacing-xs);
 }
 
+.memo-editor__image-btn-wrapper {
+  position: relative;
+}
+
 .memo-editor__image-btn,
 .memo-editor__star-btn {
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -222,6 +267,45 @@ ul {
 .memo-editor__save-btn:hover {
   background-color: #059669;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* 이미지 선택 메뉴 */
+.image-picker-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: var(--spacing-xs);
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(46, 40, 66, 0.15);
+  z-index: 100;
+  min-width: 180px;
+}
+
+.image-picker-menu__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.image-picker-menu__item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.image-picker-menu__item:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.image-picker-menu__item:hover {
+  background-color: var(--color-hover);
 }
 
 /* 이미지 미리보기 */
@@ -284,8 +368,8 @@ ul {
 }
 
 .memo-list-header__star-btn {
-  font-size: 24px;
-  padding: var(--spacing-xs);
+  font-size: 17px;
+  padding: 5px 8px;
   color: var(--color-secondary);
   transition: all 0.2s;
   border-radius: 6px;
@@ -338,7 +422,7 @@ ul {
 .memo-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 10px;
 }
 
 .memo-item {
@@ -350,6 +434,7 @@ ul {
   justify-content: space-between;
   align-items: center;
   gap: var(--spacing-sm);
+  border-radius: 10px;
 }
 
 .memo-item:hover {
@@ -395,20 +480,20 @@ ul {
   background-color: transparent;
   border: none;
   cursor: pointer;
-  opacity: 0;
+  /* opacity: 0; */
   transition: all 0.2s;
   border-radius: 4px;
   flex-shrink: 0;
 }
 
-.memo-item:hover .memo-item__delete-btn {
+/* .memo-item:hover .memo-item__delete-btn {
   opacity: 1;
 }
 
 .memo-item__delete-btn:hover {
   background-color: rgba(239, 68, 68, 0.1);
   transform: scale(1.1);
-}
+} */
 
 
 /* 상세보기 화면 */

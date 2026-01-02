@@ -34,7 +34,15 @@
     <ul class="menu__list">
       <li><button class="menu__item" id="exportBtn">메모 내보내기</button></li>
       <li><button class="menu__item" id="importBtn">메모 가져오기</button></li>
-      <li><button class="menu__item" id="fontSizeBtn">글자크기</button></li>
+      <li class="menu__item-wrapper">
+        <button class="menu__item" id="fontSizeBtn">글자크기 +</button>
+        <!-- 글자크기 서브메뉴 -->
+        <div class="menu__submenu" id="fontSizeSubmenu" hidden>
+          <button class="menu__submenu-item" data-size="small">작게</button>
+          <button class="menu__submenu-item" data-size="medium">보통</button>
+          <button class="menu__submenu-item" data-size="large">크게</button>
+        </div>
+      </li>
       <li><button class="menu__item" id="darkModeBtn">다크모드</button></li>
     </ul>
   </nav>
@@ -65,18 +73,35 @@
         <button class="memo-editor__image-remove-btn" aria-label="이미지 삭제">✕</button>
       </div>
 
-      <!-- 숨겨진 파일 입력 -->
+      <!-- 숨겨진 파일 입력 (카메라용) -->
       <input
         type="file"
-        id="imageInput"
+        id="cameraInput"
         accept="image/*"
         capture="environment"
         hidden
       >
 
+      <!-- 숨겨진 파일 입력 (앨범용) -->
+      <input
+        type="file"
+        id="galleryInput"
+        accept="image/*"
+        hidden
+      >
+
       <div class="memo-editor__actions">
         <div class="memo-editor__left-actions">
-          <button class="memo-editor__image-btn" aria-label="이미지 추가">📷</button>
+          <div class="memo-editor__image-btn-wrapper">
+            <button class="memo-editor__image-btn" aria-label="이미지 추가">📷</button>
+
+            <!-- 이미지 선택 메뉴 -->
+            <div class="image-picker-menu" id="imagePickerMenu" hidden>
+              <button class="image-picker-menu__item" id="cameraBtn">📷 사진 촬영</button>
+              <button class="image-picker-menu__item" id="galleryBtn">🖼️ 앨범에서 선택</button>
+            </div>
+          </div>
+
           <button class="memo-editor__star-btn" aria-label="중요 표시">☆</button>
         </div>
         <button class="memo-editor__save-btn">저장하기</button>
