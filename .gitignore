@@ -1,0 +1,20 @@
+# 운영체제 관련
+.DS_Store
+Thumbs.db
+
+# 에디터 관련
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 임시 파일
+*.log
+*.tmp
+
+# Node modules (필요시)
+node_modules/
+
+# 환경 변수 파일
+.env
+.env.local
