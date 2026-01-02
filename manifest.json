@@ -4,8 +4,8 @@
   "description": "PWA 기반 오프라인 메모장 애플리케이션",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#FAF9FC",
+  "theme_color": "#2E2842",
   "orientation": "portrait",
   "icons": [
     {
